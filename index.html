@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cobertura 360 | Un viaje hacia la tranquilidad</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1e3a5f;
+            --primary-light: #2c5282;
+            --accent: #c9a227;
+            --accent-light: #d4af37;
+            --text: #2d3748;
+            --text-light: #718096;
+            --bg: #f7fafc;
+            --white: #ffffff;
+            --stage-28: #4fd1c5;
+            --stage-30: #63b3ed;
+            --stage-37: #f6ad55;
+            --stage-45: #9f7aea;
+            --stage-60: #f687b3;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+            overflow-x: hidden;
+        }
+
+        /* Contenedor de Imágenes Fijo - AHORA EMPIEZA OCULTO */
+        .character-container {
+            position: fixed;
+            right: 5%;
+            top: 50%;
+            transform: translateY(-50%) translateX(100px);
+            width: 500px;
+            height: 600px;
+            z-index: 100;
+            pointer-events: none;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+
+        .character-container.visible {
+            opacity: 0;
+            transform: translateY(-50%) translateX(0);
+        }
+
+        .stage-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transform: scale(1.1);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stage-image.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Marco decorativo que cambia de color */
+        .character-frame {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 4px solid transparent;
+            border-radius: 40px;
+            transition: border-color 0.8s ease;
+            pointer-events: none;
+        }
+
+        .character-container.stage-28 .character-frame { border-color: var(--stage-28); }
+        .character-container.stage-30 .character-frame { border-color: var(--stage-30); }
+        .character-container.stage-37 .character-frame { border-color: var(--stage-37); }
+        .character-container.stage-45 .character-frame { border-color: var(--stage-45); }
+        .character-container.stage-60 .character-frame { border-color: var(--stage-60); }
+
+        /* Etiqueta de edad flotante */
+        .age-float-label {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: all 0.5s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .stage-image.active + .age-float-label {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Secciones de Scroll */
+        .journey-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 4rem 2rem;
+            position: relative;
+            padding-right: 550px; /* Espacio para la imagen */
+        }
+
+        /* Hero intro SIN padding-right porque no hay imagen */
+        .hero-intro {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            padding-right: 2rem; /* Igual que padding normal */
+        }
+
+        .journey-content {
+            max-width: 600px;
+            margin-left: 10%;
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.8s ease;
+        }
+
+        .journey-section.active .journey-content {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+       .journey-content h2, .honra-camino{
+            font-size: 30px; 
+            margin-bottom: 26px;
+        }
+
+        /* Especificaciones por sección */
+        /* Optimizamos las secciones para que la imagen de fondo no distraiga del mensaje */
+
+        /* 
+           colores antes 
+
+           .section-28 { 
+                background-image: 
+                        url('img/1000306163.png'), 
+                        linear-gradient(135deg, #e6fffa 0%, #b2f5ea 100%); 
+                    background-size: auto 60%, 100% 100%; 
+                    background-position: center right 10%, center;
+                    background-attachment: fixed, scroll; 
+                    background-repeat: no-repeat;
+                }
+
+                .section-30 { 
+                    background-image: 
+                        url('img/1000306162.png'), 
+                        linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%); 
+                    background-size: auto 60%, 100% 100%;
+                    background-position: center right 10%, center;
+                    background-attachment: fixed, scroll;
+                    background-repeat: no-repeat;
+                }
+
+                .section-37 { 
+                    background-image: 
+                        url('img/1000306161.png'), 
+                        linear-gradient(135deg, #fffaf0 0%, #feebc8 100%); 
+                    background-size: auto 60%, 100% 100%;
+                    background-position: center right 10%, center;
+                    background-attachment: fixed, scroll;
+                    background-repeat: no-repeat;
+                }
+
+                .section-45 { 
+                    background-image: 
+                        url('img/1000306230.png'), 
+                        linear-gradient(135deg, #faf5ff 0%, #e9d8fd 100%); 
+                    background-size: auto 60%, 100% 100%;
+                    background-position: center right 10%, center;
+                    background-attachment: fixed, scroll;
+                    background-repeat: no-repeat;
+                }
+
+                .section-60 { 
+                    background-image: 
+                        url('img/1000306164.png'), 
+                        linear-gradient(135deg, #fff5f7 0%, #fed7e2 100%); 
+                    background-size: auto 60%, 100% 100%;
+                    background-position: center right 10%, center;
+                    background-attachment: fixed, scroll;
+                    background-repeat: no-repeat;
+                }
+
+        */
+
+        /* Sección 28 - Azul Institucional Transparente */
+            .section-28 { 
+                background-image: 
+                    url('img/1000306163.png'), 
+                    linear-gradient(135deg, rgba(0, 82, 161, 0.45) 0%, rgba(0, 61, 122, 0.9) 100%); 
+                background-size: auto 55%, 100% 100%;
+                background-position: center right 5%, center;
+                background-attachment: fixed, scroll;
+                background-repeat: no-repeat;
+            }
+
+            /* Sección 30 - Verde Evolución Transparente */
+            .section-30 { 
+                background-image: 
+                    url('img/1000306162.png'), 
+                    linear-gradient(135deg, rgba(136, 180, 80, 0.30) 0%, rgba(118, 158, 69, 0.2) 100%); 
+                background-size: auto 55%, 100% 100%;
+                background-position: center right 5%, center;
+                background-attachment: fixed, scroll;
+                background-repeat: no-repeat;
+            }
+
+            /* Sección 37 - Verde MC Protección Transparente */
+            .section-37 { 
+                background-image: 
+                    url('img/1000306161.png'), 
+                    linear-gradient(135deg, rgba(21, 137, 46, 0.30 ) 0%, rgba(17, 110, 37, 0.2) 100%); 
+                background-size: auto 55%, 100% 100%;
+                background-position: center right 5%, center;
+                background-attachment: fixed, scroll;
+                background-repeat: no-repeat;
+            }
+
+            /* Sección 45 - Magenta Patrimonio Transparente */
+            .section-45 { 
+                background-image: 
+                    url('img/1000306230.png'), 
+                    linear-gradient(135deg, rgba(238, 32, 89, 0.30) 0%, rgba(207, 27, 77, 0.2) 100%); 
+                background-size: auto 55%, 100% 100%;
+                background-position: center right 5%, center;
+                background-attachment: fixed, scroll;
+                background-repeat: no-repeat;
+            }
+
+            /* Sección 60 - Cierre Azul Legado Transparente */
+            .section-60 { 
+                background-image: 
+                    url('img/1000306164.png'), 
+                    linear-gradient(135deg, rgba(0, 82, 161, 0.30) 0%, rgba(0, 61, 122, 0.2) 100%); 
+                background-size: auto 55%, 100% 100%;
+                background-position: center right 5%, center;
+                background-attachment: fixed, scroll;
+                background-repeat: no-repeat;
+            }
+
+        .age-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 1rem;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .section-28 .age-badge { background: var(--stage-28); }
+        .section-30 .age-badge { background: var(--stage-30); }
+        .section-37 .age-badge { background: var(--stage-37); }
+        .section-45 .age-badge { background: var(--stage-45); }
+        .section-60 .age-badge { background: var(--stage-60); }
+
+        .journey-content h2 {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            line-height: 46px;
+        }
+
+        .journey-content .story {
+            font-size: 18px;
+            line-height: 24px;
+            color: var(--text);
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: rgba(255,255,255,0.7);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--accent);
+        }
+
+        .journey-content .dilemma {
+            background: rgba(212, 195, 9, 0.7);
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .dilemma::before {
+            content: "⚠️";
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: var(--accent);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .dilemma strong {
+            color: var(--primary);
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 16px;
+        }
+
+        .solution-box {
+            background: var(--primary);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-top: 2rem;
+            position: relative;
+            overflow: hidden;
+            display: none;
+        }
+
+        .solution-box::before {
+            content: "✓";
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 8rem;
+            opacity: 0.1;
+        }
+
+        .solution-box h3 {
+            color: var(--accent-light);
+            margin-bottom: 1rem;
+            font-size: 14px;
+        }
+
+        /* Navegador de Etapas Flotante - AHORA EMPIEZA OCULTO */
+        .stage-navigator {
+            position: fixed;
+            left: 2rem;
+            top: 50%;
+            transform: translateY(-50%) translateX(-100px);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            opacity: 0.6;
+            transition: all 0.8s ease;
+        }
+
+        .stage-navigator.visible {
+            opacity: 0.8;
+            transform: translateY(-50%) translateX(0);
+        }
+
+        .stage-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .stage-dot:hover {
+            transform: scale(1.3);
+        }
+
+        .stage-dot.active {
+            background: var(--stage-28);
+            transform: scale(1.5);
+        }
+
+        .stage-dot::after {
+            content: attr(data-age);
+            position: absolute;
+            left: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 8px;
+            font-weight: 600;
+            color: var(--text);
+            opacity: 0;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+        }
+
+        .stage-dot:hover::after,
+        .stage-dot.active::after {
+            opacity: 0.6;
+        }
+
+        /* Header */
+        .hero-intro {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-intro::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            cursor: pointer;
+        }
+
+        .container-img{
+            width: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Sección de Calculadora */
+        .calculator-section {
+            padding: 5rem 2rem;
+            background: var(--white);
+        }
+
+        .section-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .calculator-container {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.95rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper input,
+        .input-wrapper select {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: var(--white);
+        }
+
+        .input-wrapper input:focus,
+        .input-wrapper select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        .range-container {
+            margin-top: 0.5rem;
+        }
+
+        .range-value {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e2e8f0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .results-panel {
+            background: var(--primary);
+            color: var(--white);
+            padding: 2rem;
+            border-radius: 20px;
+            position: sticky;
+            top: 100px;
+        }
+
+        .results-panel h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+            margin-top: 1rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--accent);
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .result-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .result-highlight {
+            color: var(--accent-light);
+            font-size: 1.5rem;
+        }
+
+        .savings-alert {
+            /* background: rgba(255, 255, 255, 0.6); */
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .savings-alert strong {
+            color: var(--accent-light);
+            display: block;
+            margin-bottom: 0.25rem;
+            font-size: 1.1rem;
+        }
+
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .character-container {
+                width: 400px;
+                height: 500px;
+                right: 2%;
+                opacity: 0 !important;
+            }
+            
+            .journey-section {
+                padding-right: 450px;
+            }
+        }
+
+        @media (max-width: 968px) {
+            .character-container {
+                /* position: relative;
+                width: 90%;
+                max-width: 500px;
+                height: 400px; */
+                margin: 2rem auto;
+                right: auto;
+                top: auto;
+                transform: none;
+                opacity: 0 !important;
+            }
+
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .character-container.visible {
+                transform: none;
+            }
+            
+            .journey-section {
+                padding: 2rem;
+                min-height: auto;
+                flex-direction: column;
+                padding-right: 2rem;
+            }
+            
+            .stage-navigator {
+                display: none;
+            }
+
+            .journey-content h2, .honra-camino{
+                font-size: 26px; 
+                margin-bottom: 20px;
+            }
+
+             .section-28, .section-30, .section-37, .section-45, .section-60 {
+                /* Movemos la imagen al fondo y la hacemos más pequeña para que no compita con el texto */
+                background-size: auto 40%, 100% 100%;
+                background-position: bottom right;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-content h1 {
+                font-size: 20px !important;
+            }
+            
+            .journey-content h2 {
+                font-size: 14px !important;
+            }
+            
+            .character-container {
+                height: 0;
+                 opacity: 0 !important;
+            }
+
+            .calculator-container {
+                padding: 20px  !important;
+            }
+
+            .journey-content h2 , .honra-camino{
+                font-size: 24px; 
+                margin-bottom: 16px;
+            }
+           
+            .section-28, .section-30, .section-37, .section-45, .section-60 {
+                /* En móvil, la imagen se vuelve un elemento decorativo sutil al fondo */
+                background-size: auto 30%, 100% 100%;
+                background-position: top right;
+                background-attachment: scroll;
+            }
+        }
+
+        /* Transiciones suaves entre imágenes */
+        .image-transition-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--primary);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            z-index: 10;
+        }
+
+        .changing .image-transition-overlay {
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navegador de Etapas - AHORA OCULTO HASTA SECCIÓN 28 -->
+    <div class="stage-navigator" id="stageNavigator">
+        <div class="stage-dot active" data-age="28" onclick="scrollToSection('section-28')"></div>
+        <div class="stage-dot" data-age="30" onclick="scrollToSection('section-30')"></div>
+        <div class="stage-dot" data-age="37" onclick="scrollToSection('section-37')"></div>
+        <div class="stage-dot" data-age="45" onclick="scrollToSection('section-45')"></div>
+        <div class="stage-dot" data-age="60" onclick="scrollToSection('section-60')"></div>
+    </div>
+
+    <!-- Personajes Reales - AHORA OCULTOS HASTA SECCIÓN 28 -->
+    <div class="character-container" id="characterContainer">
+        <div class="image-transition-overlay"></div>
+        
+      
+        <!-- <img src="img/1000306163.png" 
+             class="stage-image active" 
+             data-stage="28" 
+             alt="Pareja joven confundida revisando documentos de seguro en laptop">
+        
+      
+        <img src="img/1000306162.png" 
+             class="stage-image" 
+             data-stage="30" 
+             alt="Pareja preocupada revisando pólizas y documentos de seguro">
+        
+      
+        <img src="img/1000306161.png" 
+             class="stage-image" 
+             data-stage="37" 
+             alt="Familia feliz con bebé y mascota en el parque">
+        
+     
+        <img src="img/1000306230.png" 
+             class="stage-image" 
+             data-stage="45" 
+             alt="Pareja madura tranquila en casa"
+             style="filter: saturate(0.8) contrast(1.1);">
+        
+     
+        <img src="img/1000306164.png" 
+             class="stage-image" 
+             data-stage="60" 
+             alt="Pareja mayor tranquila disfrutando su legado en la playa"> -->
+
+        <div class="character-frame"></div>
+        
+       
+        <div class="age-float-label" id="ageLabel">28 años</div>
+    </div> 
+
+    <!-- Intro - SIN IMAGEN, solo texto centrado -->
+    <section class="hero-intro">
+        <div class="hero-content">
+            <h1>Hoy es el mañana que tanto te preocupaba ayer.</h1>
+            <p>A medida que vas creciendo, tus miedos cambian. Tu patrimonio crece. Tu familia evoluciona. 
+                <br/>
+                <strong>¿Tu protección financiera crece contigo?</strong></p>
+            <p style=" font-size: 14px; margin-top: 2rem; opacity: 0.7;">Desplázate para conocer tu historia ↓</p>
+        </div>
+        <div class="scroll-indicator">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M12 5v14M19 12l-7 7-7-7"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Sección 28 - AQUÍ APARECE LA IMAGEN POR PRIMERA VEZ -->
+    <section class="journey-section section-28" id="section-28" data-stage="28">
+        <div class="journey-content">
+            <span class="age-badge">28 años</span>
+            <h2>"¿Qué es un deducible y por qué me da vergüenza preguntar?"</h2>
+            
+            <div class="story">
+                Acabas de conseguir tu primer trabajo "serio". En la reunión de inducción, el de RH mencionó algo sobre "seguro de gastos médicos mayores" y tú asentiste, pero en realidad no entiendes ni qué es un deducible, ni por qué hay una "suma asegurada", ni qué significa "coaseguro".<br>
+                Quieres protegerte, pero al buscar en Google te encuentras con demasiada información qué te sientes abrumado.<br/>¿A quién le preguntas sin que te vean la cara de confundido?
+            </div>
+
+            <div class="dilemma">
+                <strong>El miedo real a los 28:</strong>
+                "Voy a firmar algo que no entiendo, y cuando lo necesite de verdad, descubriré que no cubre lo que pensaba. Pero da más miedo preguntar y que se den cuenta de que no sé nada."
+            </div>
+
+            <div class="solution-box">
+                <h3>Mi rol como tu broker a los 28:</h3>
+                <p>Te explico todo como si tuvieras 5 años. Sin vergüenza, sin tecnicismos. No te vendo lo más caro, te enseño a pescar. Entenderás exactamente qué estás comprando, por qué lo necesitas, y cómo usarlo cuando llegue el momento.</p>
+                <p style="margin-top: 1rem; font-size: 10px; opacity: 0.9;">→ Empezamos con un GM que realmente cubra (no esos de $100,000 que no alcanzan ni para la ambulancia)</p>
+            </div>
+        </div>
+        <!-- <div class="container-img">
+             <img src="img/1000306163.png" 
+                  alt="Pareja joven confundida revisando documentos de seguro en laptop"
+                  ">
+        </div> -->
+    </section>
+
+    <!-- Sección 30 -->
+    <section class="journey-section section-30" id="section-30" data-stage="30">
+        <div class="journey-content">
+            <span class="age-badge">30 años</span>
+            <h2>"Tengo seguro, pero ¿realmente estoy protegido?"</h2>
+            
+            <div class="story">
+                Ya tienes tu primer seguro hace 2 años, pero nunca lo has usado (gracias a Dios). Pero empiezas a escuchar historias de terror en las reuniones de amigos: a Roberto le negaron la cobertura de maternidad porque no la "activó" 10 meses antes, a Laura descubrieron que su seguro no cubría en el hospital privado donde la atendieron de emergencia.
+                <br>
+                Miras tu póliza y te das cuenta de que no recuerdas qué firmaste. ¿Tienes las mismas exclusiones? ¿Estás pagando por algo que no necesitas? ¿Sabes que te incluye?
+            </div>
+
+            <div class="dilemma">
+                <strong>El momento de verdad a los 30:</strong>
+                "Estoy pagando $800 al mes, pero ¿estoy protegido o tengo una ilusión de seguridad? ¿Cómo sé si hay algo mejor sin cambiar solo por cambiar?"
+            </div>
+
+            <div class="solution-box">
+                <h3>Mi rol como tu broker a los 30:</h3>
+                <p>Hacemos una auditoría completa de tu póliza actual. No vendo... aún. Primero te muestro exactamente dónde tienes huecos (cobertura de maternidad/paternidad, enfermedades graves, accidentes). Luego comparamos opciones no por precio, sino por valor de protección real.</p>
+                <p style="margin-top: 1rem; font-size: 10px; opacity: 0.9;">→ Un cambio inteligente ahora puede ahorrarte $200,000 en los próximos 10 años</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección 37 -->
+    <section class="journey-section section-37" id="section-37" data-stage="37">
+        <div class="journey-content">
+            <span class="age-badge">37 años</span>
+            <h2>"Ya no es solo por mí. Si me pasa algo, ¿qué pasa con ellos?"</h2>
+            
+            <div class="story">
+                Llegaron los hijos. O la macota que sientes como hijo (sí, también cuenta). De repente, tu perspectiva cambia radicalmente. Ya no te preocupa tanto el choque del coche, te preocupa quién pagará la universidad si te pasa algo. Te despiertas a las 3am pensando en escenarios catastróficos que antes ni considerabas.
+                <br>
+                Tienes más patrimonio que a los 28, pero también más deudas (la casa más grande, el coche familiar). Tu familia depende 100% de tu ingreso. ¿Y si te incapacitas? ¿Y si te diagnostican algo grave?
+            </div>
+
+            <div class="dilemma">
+                <strong>La pesadilla del proveedor a los 37:</strong>
+                "Tengo que proteger a mi familia, pero hay tantas opciones: vida, educación, gastos médicos familiares, póliza de hogar... ¿Por dónde empiezo sin arruinar el presupuesto familiar ni dejar huecos peligrosos?"
+            </div>
+
+            <div class="solution-box">
+                <h3>Mi rol como tu broker a los 37:</h3>
+                <p>Diseñamos un Sistema de Protección Familiar Integral. No son pólizas sueltas, es una estrategia coordinada: cuánto necesitan tus hijos si faltas, cómo proteger el patrimonio familiar, qué pasa si tu pareja no puede trabajar.</p>
+                <p style="margin-top: 1rem; font-size: 10px; opacity: 0.9;">→ Tu familia nunca estará desprotegida por un error administrativo</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección 45 -->
+    <section class="journey-section section-45" id="section-45" data-stage="45">
+        <div class="journey-content">
+            <span class="age-badge">45 años</span>
+            <h2>"Tengo mucho que perder. ¿Estoy realmente cubierto?"</h2>
+            
+            <div class="story">
+                Estás en tu pico profesional. Compraste la casa soñada, tienes inversiones, quizás un negocio propio o acciones significativas. Tu patrimonio es el mayor de tu vida, pero también es el más vulnerable. Un accidente grave, una demanda por responsabilidad civil, una enfermedad crítica... podrían destruir 20 años de trabajo acumulado en meses.
+                <br>
+                Te das cuenta de que tus seguros fueron diseñados cuando ganabas la mitad. ¿Tu cobertura de responsabilidad civil es suficiente para tu nivel actual de riesgo? ¿Tu seguro de hogar cubre el valor actual de tu propiedad o solo el de hace 10 años?
+            </div>
+
+            <div class="dilemma">
+                <strong>El miedo del exitoso a los 45:</strong>
+                "Tengo mucho que perder. Mis seguros actuales fueron diseñados para otra realidad. ¿Están mis inversiones protegidas? ¿Mi empresa tiene responsabilidad civil suficiente? ¿Qué pasa con mi deuda hipotecaria si me incapacito permanentemente?"
+            </div>
+
+            <div class="solution-box">
+                <h3>Mi rol como tu broker a los 45:</h3>
+                <p>Estrategia de Protección Patrimonial Avanzada. Revisamos cada activo: la casa (valor actualizado, no el de hace 10 años), el negocio (cobertura de interrupción de operaciones), tus inversiones. Te protegemos de lo que no ves venir: una demanda que excede tu cobertura actual, un daño estructural no cubierto, incapacidad permanente.</p>
+                <p style="margin-top: 1rem; font-size: 10px; opacity: 0.9;">→ Un seguro mal diseñado a los 45 puede costarte tu libertad financiera</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección 60 -->
+    <section class="journey-section section-60" id="section-60" data-stage="60">
+        <div class="journey-content">
+            <span class="age-badge">60+ años</span>
+            <h2>"No quiero ser una carga. Quiero dejar tranquilidad, no deudas."</h2>
+            
+            <div class="story">
+                Los hijos son independientes. La hipoteca está pagada. Pero ahora enfrentas nuevos miedos: ¿qué pasa si necesito cuidados de largo plazo? ¿Mis seguros actuales me cubren en el extranjero si me jubilo fuera? ¿Cómo transfiero mi patrimonio a mis hijos sin que se pierda en impuestos, juicios o peores aún, en conflictos familiares?
+                <br>
+                Quieres disfrutar tu jubilación, pero también asegurarte de que tu legado sea una bendición, no una carga administrativa o financiera para quienes amas.
+            </div>
+
+            <div class="dilemma">
+                <strong>La preocupación del legado a los 60:</strong>
+                "No quiero ser una carga para mis hijos cuando sea mayor. Quiero dejarles algo, pero más importante: quiero dejarles tranquilidad, no deudas ni complicaciones legales. ¿Cómo aseguro que mi patrimonio llegue intacto a la siguiente generación?"
+            </div>
+
+            <div class="solution-box">
+                <h3>Mi rol como tu broker a los 60:</h3>
+                <p>Transición a Protección Senior y Legado. Ajustamos coberturas que ya no necesitas (menos vida temporal, más cuidados crónicos y críticos). Implementamos pólizas de vida permanentes como herramienta de transferencia patrimonial eficiente. A los 80, seguirás teniendo cobertura de gastos médicos de primera clase (no esos seguros "para mayores" que no cubren nada).</p>
+                <p style="margin-top: 1rem; font-size: 10px; opacity: 0.9;">→ Mi compromiso: estaré contigo hasta el final, ajustando tu protección cada año</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white; text-align: center; padding: 4rem 2rem;">
+        <div>
+            <h2 class="honra-camino">Honra tu camino. Protege tu destino.</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">
+                No importa si estás trazando tu primer mapa a los 28 o asegurando tu legado a los 60; el momento de <b>crear tranquilidad</b> es hoy.
+            </p>
+            <!-- <a href="#" style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--accent); color: var(--primary); padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 18px; box-shadow: 0 4px 20px rgba(201, 162, 39, 0.4); transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                Iniciar mi Auditoría Gratuita de Protección →
+            </a> -->
+
+               <div class="calculator-container fade-in">
+                <div class="calculator-grid">
+                    <div class="inputs-panel">
+                        <div class="input-group">
+                            <label>¿Cuántas pólizas tienes actualmente?</label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">📋</span>
+                                <select id="numPolizas" onchange="calcular()">
+                                    <option value="1">1 póliza</option>
+                                    <option value="2" selected>2 pólizas</option>
+                                    <option value="3">3 pólizas</option>
+                                    <option value="4">4 pólizas</option>
+                                    <option value="5+">5 o más pólizas</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Pago mensual aproximado en seguros</label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">💰</span>
+                                <input type="number" id="pagoMensual" placeholder="Ej: 3500" value="3500" oninput="calcular()">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>¿Cuándo fue tu última revisión profesional?</label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">📅</span>
+                                <select id="ultimaRevision" onchange="calcular()">
+                                    <option value="0">Nunca / Hace más de 2 años</option>
+                                    <option value="1">Hace 1-2 años</option>
+                                    <option value="2">Hace menos de 1 año</option>
+                                    <option value="3">Hace menos de 6 meses</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Nivel de entendimiento de tus coberturas</label>
+                            <div class="range-container">
+                                <div class="range-value">
+                                    <span>Confundido</span>
+                                    <span id="nivelTexto">Regular</span>
+                                    <span>Experto</span>
+                                </div>
+                                <input type="range" id="nivelEntendimiento" min="1" max="5" value="3" oninput="actualizarNivel(); calcular()">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>¿Has tenido problemas con algún siniestro?</label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">⚠️</span>
+                                <select id="problemasSiniestro" onchange="calcular()">
+                                    <option value="0">No / No aplica</option>
+                                    <option value="1">Pequeños retrasos</option>
+                                    <option value="2">Problemas moderados</option>
+                                    <option value="3">Negativa de pago injustificada</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="results-panel">
+                        <h3>
+                            <span>📊</span>
+                            <span>Tu diagnóstico</span>
+                        </h3>
+                        
+                        <div class="result-item">
+                            <span class="result-label">Riesgo de cobertura insuficiente</span>
+                            <span class="result-value" id="riesgoCobertura">Alto</span>
+                        </div>
+
+                        <div class="result-item">
+                            <span class="result-label">Probabilidad de sobre-pago anual</span>
+                            <span class="result-value" id="sobrePago">$8,400</span>
+                        </div>
+
+                        <div class="result-item">
+                            <span class="result-label">Huecos críticos detectados</span>
+                            <span class="result-value" id="huecos">3 áreas</span>
+                        </div>
+
+                        <div class="result-item">
+                            <span class="result-label">Ahorro potencial con auditoría</span>
+                            <span class="result-value result-highlight" id="ahorroPotencial">$12,600/año</span>
+                        </div>
+
+                        <div class="savings-alert">
+                            <strong>⚡ Alerta de Protección</strong>
+                            <span id="mensajeAlerta">Tienes un 78% de probabilidad de estar mal cubierto en gastos médicos mayores</span>
+                        </div>
+
+                        <p>&nbsp;</p>
+
+                        <button class="cta-button btn-full" style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--accent); color: var(--primary); padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 18px; box-shadow: 0 4px 20px rgba(201, 162, 39, 0.4); transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'" onclick="agendarAuditoria()">
+                            Agendar Auditoría Gratuita Ahora
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <p style="margin-top: 2rem; font-size: 10px; opacity: 0.8;">
+                +900 familias protegidas a lo largo de 15 años · Disponible 24/7 para emergencias
+            </p>
+        </div>
+    </section>
+
+    <script>
+        // Intersection Observer para detectar secciones activas
+        const sections = document.querySelectorAll('.journey-section');
+        const characterContainer = document.getElementById('characterContainer');
+        const stageNavigator = document.getElementById('stageNavigator');
+        const ageLabel = document.getElementById('ageLabel');
+        const dots = document.querySelectorAll('.stage-dot');
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '-40% 0px -40% 0px',
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const stage = entry.target.getAttribute('data-stage');
+                    
+                    // MOSTRAR imagen y navegador cuando estamos en sección 28 o posterior
+                    if (stage === '28' || stage === '30' || stage === '37' || stage === '45' || stage === '60') {
+                        //characterContainer.classList.add('visible');
+                        stageNavigator.classList.add('visible');
+                    }
+                    
+                    // Cambiar clase del contenedor para el marco de color
+                    characterContainer.className = 'character-container stage-' + stage;
+                    if (stage !== '28') {
+                        //characterContainer.classList.add('visible');
+                    }
+                    
+                    // Cambiar imagen activa con transición suave
+                    document.querySelectorAll('.stage-image').forEach(img => {
+                        img.classList.remove('active');
+                        if (img.getAttribute('data-stage') === stage) {
+                            img.classList.add('active');
+                        }
+                    });
+                    
+                    // Actualizar etiqueta de edad
+                    ageLabel.textContent = stage + ' años';
+                    
+                    // Actualizar dots de navegación
+                    dots.forEach(dot => {
+                        dot.classList.remove('active');
+                        if (dot.getAttribute('data-age') === stage) {
+                            dot.classList.add('active');
+                        }
+                    });
+                    
+                    // Activar animación de contenido
+                    entry.target.classList.add('active');
+                } else {
+                    entry.target.classList.remove('active');
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+        // Navegación suave al hacer click en dots
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Parallax suave para la imagen
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const scrolled = window.pageYOffset;
+                    const character = document.getElementById('characterContainer');
+                    
+                    // Solo aplicar parallax si la imagen es visible
+                    if (character.classList.contains('visible')) {
+                        const yPos = -(scrolled * 0.05);
+                        character.style.transform = `translateY(calc(-50% + ${yPos}px)) translateX(0)`;
+                    }
+                    
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+
+        // Efecto de transición entre imágenes
+        function changeImage(stage) {
+            characterContainer.classList.add('changing');
+            setTimeout(() => {
+                characterContainer.classList.remove('changing');
+            }, 400);
+        }
+
+         // Calculadora
+        function calcular() {
+            const numPolizas = document.getElementById('numPolizas').value;
+            const pagoMensual = parseInt(document.getElementById('pagoMensual').value) || 0;
+            const ultimaRevision = parseInt(document.getElementById('ultimaRevision').value);
+            const nivelEntendimiento = parseInt(document.getElementById('nivelEntendimiento').value);
+            const problemasSiniestro = parseInt(document.getElementById('problemasSiniestro').value);
+
+            // Cálculos
+            const pagoAnual = pagoMensual * 12;
+            let factorRiesgo = 0;
+            
+            // Factor por tiempo sin revisión
+            factorRiesgo += (3 - ultimaRevision) * 15;
+            
+            // Factor por entendimiento (menor entendimiento = mayor riesgo)
+            factorRiesgo += (6 - nivelEntendimiento) * 10;
+            
+            // Factor por problemas previos
+            factorRiesgo += problemasSiniestro * 20;
+
+            // Factor por número de pólizas (más pólizas = más probabilidad de errores si no se revisan)
+            const numPolizasValor = numPolizas === '5+' ? 5 : parseInt(numPolizas);
+            factorRiesgo += numPolizasValor * 5;
+
+            // Calcular sobre-pago estimado (entre 15% y 35% del pago anual)
+            const porcentajeSobrePago = 0.15 + (factorRiesgo / 100);
+            const sobrePago = Math.round(pagoAnual * porcentajeSobrePago);
+            
+            // Calcular ahorro potencial (incluye optimización de coberturas)
+            const ahorroPotencial = Math.round(sobrePago * 1.5);
+
+            // Determinar nivel de riesgo
+            let riesgoTexto = 'Bajo';
+            let riesgoColor = '#38a169';
+            if (factorRiesgo > 30) {
+                riesgoTexto = 'Medio';
+                riesgoColor = '#d69e2e';
+            }
+            if (factorRiesgo > 60) {
+                riesgoTexto = 'Alto';
+                riesgoColor = '#e53e3e';
+            }
+            if (factorRiesgo > 85) {
+                riesgoTexto = 'Crítico';
+                riesgoColor = '#c53030';
+            }
+
+            // Huecos críticos estimados
+            const huecos = Math.ceil(factorRiesgo / 25);
+
+            // Mensaje personalizado
+            const mensajes = [
+                "Tus pólizas parecen estar en orden, pero una revisión podría optimizar tu protección.",
+                "Detectamos posibles áreas de mejora en tus coberturas de responsabilidad civil.",
+                "Probablemente estés pagando de más o tengas huecos importantes en protección patrimonial.",
+                "¡Urgente! Tienes alto riesgo de no estar cubierto en situaciones críticas. Revisión inmediata recomendada."
+            ];
+            const mensajeIndex = Math.min(Math.floor(factorRiesgo / 25), 3);
+
+            // Actualizar UI
+            document.getElementById('riesgoCobertura').textContent = riesgoTexto;
+            document.getElementById('riesgoCobertura').style.color = riesgoColor;
+            document.getElementById('sobrePago').textContent = '$' + sobrePago.toLocaleString();
+            document.getElementById('huecos').textContent = huecos + (huecos === 1 ? ' área' : ' áreas');
+            document.getElementById('ahorroPotencial').textContent = '$' + ahorroPotencial.toLocaleString() + '/año';
+            document.getElementById('mensajeAlerta').textContent = mensajes[mensajeIndex];
+        }
+
+        // Agendar auditoría
+        function agendarAuditoria() {
+            showToast('Redirigiendo a calendario de auditorías gratuitas...');
+            setTimeout(() => {
+                // Aquí iría el enlace real al calendario
+                document.getElementById('contacto').scrollIntoView({ behavior: 'smooth' });
+            }, 1500);
+        }
+
+    </script>
+</body>
+</html>
